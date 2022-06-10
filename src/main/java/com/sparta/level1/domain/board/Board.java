@@ -1,5 +1,6 @@
 package com.sparta.level1.domain.board;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.sparta.level1.domain.Timestamped;
 import com.sparta.level1.domain.review.Review;
 import com.sparta.level1.domain.review.ReviewDTO;
@@ -29,8 +30,9 @@ public class Board extends Timestamped {
     @Column(nullable = false)
     private String writer;
 
-    @OneToMany(mappedBy = "boardFK")
-    private List<Review> reviews = new ArrayList<>();
+    @JsonManagedReference
+    @OneToMany(mappedBy = "boardFK", cascade = CascadeType.ALL)
+    private final List<Review> reviews = new ArrayList<>();
 
     public Board(BoardDTO boardDTO){
         this.title = boardDTO.getTitle();
@@ -38,11 +40,13 @@ public class Board extends Timestamped {
         this.writer = boardDTO.getWriter();
     }
 
-    // Review 클래스가 아니고 ReviewDTO 클래스를 이용해야 하나?
-    // 이용해서 구현할 수 있나...?
     public void add(Review review){
         review.setBoardFK(this);
-        this.reviews.add(review);
+        /// 연관관계의 주인이 Review엔티티 이므로,
+        /// Board객체의 reviews에 review를 추가하는 것이 아니라
+        /// Review객체의 review에 BoardFK를 설정해주면 알아서 reviews에 기록이 된다
+        /// (하지만 굳이 `this.reviews.add(review);`를 없엘 필요는 없다)
+//        this.reviews.add(review);
     }
 
     public void update(BoardDTO boardDTO){

@@ -18,35 +18,10 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final BoardRepository boardRepository;
 
-
-    /*public List<Review> getReviews(Long boardID){
-        return reviewRepository.findAllByBoardIDOrderByModifiedAtDesc(boardID);
-    }
-
-    public void writeReview(Review review){
-        reviewRepository.save(review);
-    }
-
-    @Transactional
-    public Long update(Long id, ReviewDTO reviewDTO){
-        Review review = reviewRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("해당 댓글이 존재하지 않습니다")
-        );
-        review.update(reviewDTO);
-        return review.getId();
-    }
-
-    public void delete(Long id){
-        reviewRepository.deleteById(id);
-    }*/
-
-    ////////// ManyToOne구현
     public List<Review> getReviews(Long boardID) {
-//        return reviewRepository.findAllByBoardIDOrderByModifiedAtDesc(board.getId());
         Board boardInstance = boardRepository.findById(boardID).orElseThrow(
                 () -> new IllegalArgumentException("존재하지 않는 ID")
         );
-//        System.out.println(boardInstance);
         return reviewRepository.findAllByBoardFKOrderByModifiedAtDesc(boardInstance);
     }
 
@@ -61,6 +36,12 @@ public class ReviewService {
         );
         review.update(reviewRequestDTO);
         return review.getId();
+    }
+
+    public Board findBoardId(Long id){
+        return boardRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException("존재하지 않는 ID")
+        );
     }
 
     public void delete(Long board) {
